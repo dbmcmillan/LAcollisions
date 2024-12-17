@@ -71,4 +71,41 @@ However, collisions involving severe injuries are more skewed to occuring in the
 
 Interestingly, although the afternoon ranks first as the time of day in which the most accidents occur, it ranks second to last in terms of fatal accidents. A cursory look at these bar plots suggests that total collisions is most correlated with when the most people tend to be driving (from 8am to 8pm), but that the severity of accidents seems more correlated to daylight/nighttime. 
 
+### Folium Map of Fatal Accidents
+To visualize the geographic distribution of fatal accidents, I created an interactive folium map using the newly created latitude and longitude columns in the dataframe. I only used fatal accidents because I didn't want the map to be too cluttered. 
+
+![image](https://github.com/user-attachments/assets/c8cba9f1-ae4f-4879-8cb7-199f753dd601)
+
+Note that the geographic distribution looks heavily concentrated in certain areas because of the odd geographic boundaries of the City of Los Angeles (which our data is limmited to). The map below (source: ZeeMaps) shows the boundaries of the City of Los Angeles: 
+
+![image](https://github.com/user-attachments/assets/c12f287a-dcdc-4235-9ff5-6f30b9fa5ebd)
+
+
+## Machine Learning To Predict Severe/Fatal Accidents
+
+Now that the exploratory analysis is complete, we can try to use machine learning to create predictive models. The ML algorithms I train in this project are as follows: 
+
++ Logistic Regression
++ XG Boost
++ Random Forest
++ Naive Bayes
+
+These algorithms were selected because of their suitability to binary classification problems. In this data set we have 3274 fatal accidents out of over 600,000 recorded accidents, which would make the target variable too lopsided for effective predictions. Instead, I included accidents involving severe injuries with fatal accidents as representing positive cases (in other words, the cases we're interested in accurately predicting), while everything else (minor injuries and no injuries) were classified as negative cases for training purposes. If we can create a machine learning model that does decently well in predicting which accidents will be classified as positive cases, it could be useful to police and medical first responders in prioritizing response. 
+
+Before creating machine learning algorithms, it's important to understand the algorithm's purpose. For practical purposes, accurately predicting accidents that result in severe injury or death should be the priority. That means that we want as few false negatives as possible. It's not too big a concern to incorrectly predict a negative case as positive, but it would be highly detrimental to predict positive cases as negative, since this may affect response times to accidents that truly do require immediate urgency. The main goal therefore is to capture as many true positive cases as possible, while reducing the number of false positive predictions is a secondary goal. That primary goal will be important for fine-tuning the models to skew toward accurately capturing true positive cases, aiming for a minimum of 75% recall for positive cases. 
+
+### Logistic Regression
+
+Logistic Regression is a supervised learning classification algorithm. Logistic Regression is commonly used for binary classification problems. It calculates probabilities for the target variable based on the input features. If the calculated probability for a test case is above 0.5, it is predicted as a positive case (=1), otherwise it is classified as a negative case (=0). Logistic Regression requires numerical variables to be scaled and categorical variables to be one-hot encoded, so I first created a preprocessor to perform both of those tasks. Then I trained the logistic regression using a pipeline and scikitlearn's various libraries. I lowered the prediction threshold from 0.5 to 0.44 to meet the objective of 75% recall rate. The model's scoring and confusion matrix for the test data is shown.
+
+![image](https://github.com/user-attachments/assets/9beebf44-a571-4035-b099-65fbfe443d13)
+
+Of the true positive cases in the testing data, the logistic regression classified 2915 correctly as positive, and 929 incorrectly as negative. Of the true negative cases, the model accurately classified 73751 as negative and 45870 as positive. Overall the model achieves an accuracy of 62%, with Log-Loss score of 0.5773 and ROC-AUC score of 0.7613. The ROC-AUC score is most appropriate for evaluation of a logistic regression, and it indicates that a randomly chosen positive test case would have a higher probability score than a randomly chosen negative test case 76.13% of the time. For reference, a perfect model would have an ROC-AUC score of 1 and a model that works as well as random guessing would have a score of 0.5. 
+
+### XG Boost
+
+The XG Boost algorithm is based on the concept of decision trees. 
+
+
+
 
